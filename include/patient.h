@@ -9,9 +9,9 @@ extern 'C' {
 #endif
 
 typedef struct Patient {
-    char name[30];
+    char* name;
     int dateOfBirth;
-    int phoneNumber;
+    char* phoneNumber;
     bool premium;
 } Patient;
 
@@ -20,14 +20,15 @@ typedef struct Patient {
  * @abstract    Prints the patient's data to the standard output.
  * @param   *p  pointer to the Patient
  */  
-void printPatient(Patient* p) {
-    printf("%s\t%d\t%d",
-            p->name,
-            p->dateOfBirth, 
-            p->phoneNumber);
-    if (p->premium)
-        printf("\t*");
-    printf("\n");
+void fprintPatient(FILE* file, Patient p) {
+    fprintf(file,
+            "%s\t%d\t%s",
+            p.name,
+            p.dateOfBirth, 
+            p.phoneNumber);
+    if (p.premium)
+        fprintf(file, "\t*");
+    fprintf(file, "\n");
 }
 
 #ifdef CPLUSPLUS

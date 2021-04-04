@@ -1,4 +1,4 @@
 .phony: all clean
 
 all:
-	gcc -I include/ src/vdb.c -o vdb
+	gcc -w  -I include/ src/vdb.c -o vdb
