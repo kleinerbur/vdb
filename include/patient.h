@@ -5,10 +5,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#ifdef CPLUSPLUS
-extern 'C' {
-#endif
-
 typedef struct Patient {
     char* name;
     int date;
@@ -16,37 +12,53 @@ typedef struct Patient {
     bool premium;
 } Patient;
 
-void fprintPatient(FILE* file, Patient p) {
+// Prints the patient's data in the given file.
+void fprintPatient(FILE* file, Patient* p) {
     fprintf(file,
-            "%s\t%d\t%s",
-            p.name,
-            p.date, 
-            p.tel);
-    if (p.premium)
-        fprintf(file, "\t*");
-    fprintf(file, "\n");
-}
-
-Patient parsePatient(const char* line) {
-    char* temp = strdup(line);
-    char* token = strtok(temp, "\t");
-    char** result = {malloc(sizeof(char)*51),
-                     malloc(sizeof(char)*5),
-                     malloc(sizeof(char)*12),
-                     malloc(sizeof(char)*2)};
-    int i = 0;
-    while(token) {
-        printf("-- %s\n", token);
-        result[i] = strdup(token);
-        token = strtok(NULL, "\t");
-        ++i;
+            "%s\t%d\t%s\t",
+            p->name,
+            p->date, 
+            p->tel);
+    if (p->premium) {
+        fprintf(file, "*\n");
+    } else {
+        fprintf(file, " \n");
     }
-    Patient p = {result[0], atoi(result[1]), result[2], result[3]=="*"};
-    return p;
 }
 
-#ifdef CPLUSPLUS
+// Parses patient data from a string
+void parsePatient(const char* line, Patient* p) {
+    char* temp = strdup(line);
+
+    char* token = strtok(temp, "\t");
+    p->name = strdup(token);
+    
+    token = strtok(NULL, "\t");
+    p->date = atoi(token);
+    
+    token = strtok(NULL, "\t");
+    p->tel = strdup(token);
+    
+    token = strtok(NULL, "\t");
+    p->premium = token == "*";
+    
+    free(temp);
 }
-#endif
+
+// Converts a patient record to a string (to be used for checking if the record is already in the database)
+char* tostring(Patient p) {
+    int n = strlen(p.name) + strlen(p.tel) + /*date*/ 4 + /*premium*/ 1 + /*tabs*/ 3 + /*newline*/ 1 + /*null terminator*/ 1;
+    char* result = malloc(sizeof(char) * n);
+
+    sprintf(result, "%s\t%d\t%s\t", p.name, p.date, p.tel);
+
+    if (p.premium){
+        strcat(result, "*\n");
+    } else {
+        strcat(result, " \n");
+    }
+    
+    return result;
+}
 
 #endif // VDB_PATIENT_H
