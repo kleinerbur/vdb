@@ -40,7 +40,7 @@ void parsePatient(const char* line, Patient* p) {
     p->tel = strdup(token);
     
     token = strtok(NULL, "\t");
-    p->premium = token == "*";
+    p->premium = !strcmp(token, "*\n");
     
     free(temp);
 }

@@ -12,6 +12,10 @@ int main(int argc, char** argv) {
 
     int idx = 1;
 
+    if (argc == 1) {
+        print_help();
+    }
+
     while (idx < argc) {
      
         // ------------------------------------------------------------------------------- SEGÍTSÉG
@@ -119,7 +123,6 @@ int main(int argc, char** argv) {
                     char* p_string = tostring(p);
                     char * line = NULL;
                     size_t len = 0;
-                    int n = 0;
                     while ((getline(&line, &len, temp)) != -1) {
                         if (EQ(line, p_string)) {
                             printf("\nAn identical record already exists in the database.\n");
@@ -227,9 +230,10 @@ int main(int argc, char** argv) {
                 }
                 ++n;
             }
-
             fclose(file);
             fclose(temp);
+            free(line);
+
 
             if (n < mod_idx) {
                 printf("Error modifying record#%d: there are only %d records in the database.\n", mod_idx, n);
@@ -277,14 +281,15 @@ int main(int argc, char** argv) {
                 }
                 ++n;
             }
+            free(line);
+            fclose(file);
+            fclose(temp);
 
             if (n <= rem_idx) {
                 printf("\nError removing record #%d: there are only %d records in the database.\n", rem_idx, n);
                 printf("(Keep in mind that indexing starts at zero.)\n");
+                remove(".temp.data");
             } else {
-                fclose(file);
-                fclose(temp);
-
                 remove(datapath);
                 rename(".temp.data", datapath);
 
